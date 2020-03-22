@@ -5,10 +5,12 @@ export interface PlainObject {
   [name: string]: any
 }
 export interface AxiosRequestConfig {
-  url: string
-  method: Methods
+  url?: string
+  method?: Methods
   // params: Record<string, any>
-  params: any
+  params?: any,
+  data?: Record<string, any>,
+  headers?: Record<string, any>
 }
 
 // 用来修饰Axios.prototype.request这个方法
