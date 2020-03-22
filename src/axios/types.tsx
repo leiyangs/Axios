@@ -10,7 +10,8 @@ export interface AxiosRequestConfig {
   // params: Record<string, any>
   params?: any,
   data?: Record<string, any>,
-  headers?: Record<string, any>
+  headers?: Record<string, any>,
+  timeout?: number
 }
 
 // 用来修饰Axios.prototype.request这个方法
