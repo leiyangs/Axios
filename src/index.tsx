@@ -125,7 +125,7 @@ console.time('cost')
   // 失败的promise会直接跳过，请求失败
   // return Promise.reject('失败的promise')
   // return config
- })
+ }, (error: any):any  => error)
  axios.interceptors.request.eject(request);
 
  let response = axios.interceptors.response.use((config: AxiosResponse): AxiosResponse => {
@@ -142,14 +142,14 @@ console.time('cost')
  })
  axios.interceptors.response.eject(response);
 
-axios({
+axios<User>({
   method: 'post',
   url: baseURL + 'post',
   data: user,
   headers: {
     name: 'yang'
   }
-}).then((response: AxiosResponse) => {
+}).then((response: AxiosResponse<User>) => {
   console.log(response.data);
   return response.data;
 }).catch((error: any) => {
