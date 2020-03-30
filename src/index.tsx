@@ -142,7 +142,7 @@ console.time('cost')
  })
  axios.interceptors.response.eject(response);
 
-axios<User>({
+axios({
   method: 'post',
   url: baseURL + 'post',
   data: user,

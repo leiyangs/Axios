@@ -1,3 +1,4 @@
+import AxiosInterceptorManager from './AxiosInterceptorManager';
 export type Methods = 'get' | 'GET' | 'post' | 'POST' | 'delete' | 'DELETE' | 'options' | 'OPTIONS' | 'put' | 'put';
 
 // Record 相当于下面的类型，属性名是string 值any
@@ -31,6 +32,6 @@ export interface AxiosInstance {
   <T = any>(config: AxiosRequestConfig): Promise<AxiosResponse<T>>; // 通过接口定义函数
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>
-    response: AxiosinterceptorManager<AxiosResponse>
+    response: AxiosInterceptorManager<AxiosResponse>
   }
 }

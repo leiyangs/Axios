@@ -1,11 +1,38 @@
 
 import { AxiosRequestConfig, AxiosResponse } from './types';
+import AxiosInterceptorManager, { Interceptor } from './AxiosInterceptorManager';
 import qs from 'qs';
 import parseHeaders from 'parse-headers';
-export default class Axios {
+export default class Axios<T> {
+  public interceptors = {
+    request: new AxiosInterceptorManager<AxiosRequestConfig>(),
+    response: new AxiosInterceptorManager<AxiosResponse<T>>()
+  }
   // T用来限制响应对象response里的data的类型
-  request<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    return this.dispatchRequest(config);
+  request(config: AxiosRequestConfig): Promise<AxiosRequestConfig | AxiosResponse<T>> {
+    const chain: Array<Interceptor<AxiosRequestConfig> | Interceptor<AxiosResponse<T>>> = [
+      {
+        onFulfilled: this.dispatchRequest
+      }
+    ]
+    // 找到AxiosInterceptorManager中interceptors管理的拦截器，放到执行链中:
+    // [request1,request] [request2,request1,request] [request3,request2,request1,request]
+    this.interceptors.request.interceptors.forEach((interceptor: Interceptor<AxiosRequestConfig> | null) => {
+      interceptor && chain.unshift(interceptor);
+    })
+    // [request,request1] [request,request1,request2] [request,request1,request2,request3,]
+    this.interceptors.response.interceptors.forEach((interceptor: Interceptor<AxiosResponse<T>> | null) => {
+      interceptor && chain.push(interceptor);
+    })
+    let promise: any= Promise.resolve(config);
+    // 如果chain的长度大于0
+    // unshift向数组头部增加元素，shift从头部删除元素并且返回这个元素
+    while(chain.length) {
+      const { onFulfilled, onRejected } = chain.shift()!;
+      promise = promise.then(onFulfilled, onRejected )
+    }
+    return promise;
+    // return this.dispatchRequest(config);
   }
   dispatchRequest<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     // 返回promise建立请求
