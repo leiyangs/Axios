@@ -21,7 +21,7 @@ axios({
   url: baseURL + 'get',
   params: user
 }).then((response: AxiosResponse) => {
-  console.log(response);
+  console.log(response,'get请求');
   return response.data;
 }).catch((error: any) => {
   console.log(error);
@@ -40,7 +40,7 @@ axios({
   },
   data: data
 }).then((response: AxiosResponse) => {
-  console.log(response);
+  console.log(response,'post请求');
   return response.data;
 }).catch((error: any) => {
   console.log(error)
@@ -59,7 +59,7 @@ setTimeout(() => {
     },
     data: data
   }).then((response: AxiosResponse) => {
-    console.log(response);
+    console.log(response,'无网络');
     return response.data;
   }).catch((error: any) => {
     console.log(error)
@@ -76,7 +76,7 @@ axios({
   timeout: 1000,
   data: data
 }).then((response: AxiosResponse) => {
-  console.log(response);
+  console.log(response,'超时');
   return response.data;
 }).catch((error: any) => {
   console.log(error);
@@ -91,7 +91,7 @@ axios({
   },
   data: data
 }).then((response: AxiosResponse) => {
-  console.log(response);
+  console.log(response,'状态码错误');
   return response.data;
 }).catch((error: any) => {
   console.log(error);
@@ -150,12 +150,36 @@ axios({
   method: 'post',
   url: baseURL + 'post',
   data: user1,
-  // headers: {
-  //   name: 'yang'
-  // }
+  headers: {
+  }
 }).then((response: AxiosResponse<User>) => {
-  console.log(response.data,'data');
+  console.log(response.data,'拦截器');
   return response.data;
 }).catch((error: any) => {
   console.log(error);
 })
+
+// 请求取消
+
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+const isCancle = axios.isCancel;
+
+axios({
+  method: 'post',
+  url: baseURL + 'post',
+  data: user1,
+  headers: {
+  },
+  cancelToken: source.token
+}).then((response: AxiosResponse<User>) => {
+  console.log(response.data,'请求取消');
+  return response.data;
+}).catch((error: any) => {
+  if(isCancle(error)) {
+    console.log('取消请求',error)
+  }else {
+    console.log(error);
+  }
+})
+source.cancel('用户取消了请求')

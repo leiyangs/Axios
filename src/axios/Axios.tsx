@@ -11,6 +11,13 @@ let defaults: AxiosRequestConfig = {
       name: 'requestname',
       accept: 'application/json',
     }
+  },
+  transformRequest: (data: any, headers: any) => {
+    headers['common']['content-type'] = 'application/json';
+    return JSON.stringify(data);
+  },
+  transformResponse: (response: any) => {
+    return response.data;
   }
 }
 let getStyleMethods = ['get', 'head', 'delete', 'options']; // get风格的请求 没有请求体
@@ -33,6 +40,9 @@ export default class Axios<T> {
   // T用来限制响应对象response里的data的类型
   request(config: AxiosRequestConfig): Promise<AxiosRequestConfig | AxiosResponse<T>> {
     config.headers = Object.assign(this.defaults.headers, config.headers);
+    if(config.transformRequest && config.data) {
+      config.data = config.transformRequest(config.data, config.headers);
+    }
     const chain: Array<Interceptor<AxiosRequestConfig> | Interceptor<AxiosResponse<T>>> = [
       {
         onFulfilled: this.dispatchRequest
@@ -84,6 +94,9 @@ export default class Axios<T> {
               headers: parseHeaders(request.getAllResponseHeaders()),
               config,
               request
+            }
+            if(config.transformResponse) {
+              response = config.transformResponse(response);
             }
             resolve(response);
           }else { // 状态码错误
@@ -137,6 +150,12 @@ export default class Axios<T> {
         request.ontimeout = function () {
           reject(`Error: timeout of ${timeout}ms exceeded`)
         }
+      }
+      if(config.cancelToken) {
+        config.cancelToken.then((message: string) => {
+          request.abort();
+          reject(message)
+        })
       }
       request.send(body);
     })

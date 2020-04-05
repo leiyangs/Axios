@@ -12,7 +12,10 @@ export interface AxiosRequestConfig {
   params?: any,
   data?: Record<string, any>, // PlainObject写法 等于Record<string, any> 等于(name: string)=> any
   headers?: Record<string, any>,
-  timeout?: number
+  timeout?: number,
+  transformRequest?: (data: any, headers: any) => any;
+  transformResponse?: (data: any) => any;
+  cancelToken?: any
 }
 
 // 返回数据的类型
@@ -34,4 +37,6 @@ export interface AxiosInstance {
     request: AxiosInterceptorManager<AxiosRequestConfig>
     response: AxiosInterceptorManager<AxiosResponse>
   }
+  CancelToken: any;
+  isCancel: any;
 }

@@ -1,5 +1,6 @@
 import Axios from './Axios';
 import { AxiosInstance } from './types';
+import { CancelToken, isCancel } from './cancle';
 // 可以创建一个axios实例 axios其实就是一个函数
 // 定义一个类的时候（Axios），其实是定义了：一个类的原型（Axios.prototype），一个类的实例。所以context的类型是Axios
 function createInstance(): AxiosInstance {
@@ -10,5 +11,7 @@ function createInstance(): AxiosInstance {
 }
 
 let axios = createInstance();
+axios.CancelToken = new CancelToken();
+axios.isCancel = isCancel;
 export default axios;
 export * from './types'; // 导出类型供axios/index使用
