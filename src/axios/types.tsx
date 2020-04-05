@@ -10,7 +10,7 @@ export interface AxiosRequestConfig {
   method?: Methods
   // params: Record<string, any>
   params?: any,
-  data?: PlainObject, // PlainObject写法 等于Record<string, any> 等于(name: string)=> any
+  data?: Record<string, any>, // PlainObject写法 等于Record<string, any> 等于(name: string)=> any
   headers?: Record<string, any>,
   timeout?: number
 }
@@ -21,8 +21,8 @@ export interface AxiosResponse<T = any> {
   data: T // 响应体
   status: number // 返回的状态
   statusText: string // 状态类型
-  headers: Record<string, any>
-  config: AxiosRequestConfig
+  headers?: Record<string, any>
+  config?: AxiosRequestConfig
   request?: XMLHttpRequest
 }
 
